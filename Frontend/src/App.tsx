@@ -9,7 +9,6 @@ import { AnimatePresence } from "framer-motion";
 // Pages
 import Index from "./pages/Index";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import SoilInput from "./pages/SoilInput";
 import Results from "./pages/Results";
 import NotFound from "./pages/NotFound";
@@ -26,9 +25,9 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
             <Route path="/soil-input" element={<SoilInput />} />
             <Route path="/results" element={<Results />} />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -130,7 +130,7 @@ const Index = () => {
                   </div>
                 </div>
                 <p className="text-gray-600 text-sm">
-                  "KrishiMitra's recommendations helped me increase my wheat yield by 20% while using less chemical fertilizer. The soil health tips were especially valuable."
+                  "KrishiMitra's recommendations helped me increase my wheat yield while using less chemical fertilizer. The soil health tips were especially valuable."
                 </p>
               </div>
               

@@ -12,6 +12,9 @@ import Login from "./pages/Login";
 import SoilInput from "./pages/SoilInput";
 import Results from "./pages/Results";
 import NotFound from "./pages/NotFound";
+import Visualization from '@/pages/Visualization';
+import CropLibrary from '@/pages/CropLibrary';
+import FarmerResources from '@/pages/FarmerResources';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +30,10 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/soil-input" element={<SoilInput />} />
             <Route path="/results" element={<Results />} />
+            <Route path="/visualization" element={<Visualization />} />
+            <Route path="/crop-library" element={<CropLibrary />} />
+            <Route path="/farmer-resources" element={<FarmerResources />} />
+            
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
@@ -38,3 +45,17 @@ const App = () => (
 );
 
 export default App;
+
+// // In your router configuration:
+// {
+//   path: "/visualization",
+//   element: <Visualization />
+// },
+// {
+//   path: "/crop-library",
+//   element: <CropLibrary />
+// },
+// {
+//   path: "/farmer-resources",
+//   element: <FarmerResources />
+// }

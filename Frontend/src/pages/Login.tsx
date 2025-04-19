@@ -31,7 +31,7 @@ const Login = () => {
   };
 
   return (
-    <GoogleOAuthProvider clientId="55683618238-kqd6l68tcpr5sec7p4rl374ddqji6glj.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="988473490003-gkcuj0jfgdr9fofdl7ccq504fg4dgvj0.apps.googleusercontent.com">
       <PageTransition>
         <div className="min-h-screen bg-gray-50">
           <Navbar />

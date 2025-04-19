@@ -1,20 +1,37 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Leaf } from 'lucide-react';
+import { Leaf, ChevronDown } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import PageTransition from '@/components/layout/PageTransition';
 import { toast } from '@/hooks/use-toast';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const SoilInput = () => {
   const navigate = useNavigate();
+  const [useDetailedAnalysis, setUseDetailedAnalysis] = useState(false);
   const [formData, setFormData] = useState({
     state: '',
     district: '',
     block: '',
     season: '',
-    soilType: ''
+    soilType: '',
+    // Additional soil parameters
+    nitrogen: '',
+    phosphorus: '',
+    potassium: '',
+    ph: '',
+    organicMatter: '',
+    moisture: ''
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -24,23 +41,118 @@ const SoilInput = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const emptyFields = Object.entries(formData)
-      .filter(([_, value]) => !value)
-      .map(([key]) => key);
+    // Validate required fields based on selected input method
+    const requiredFields = useDetailedAnalysis 
+      ? ['nitrogen', 'phosphorus', 'potassium', 'ph', 'season']
+      : ['state', 'district', 'block', 'season', 'soilType'];
+
+    const emptyFields = requiredFields
+      .filter(field => !formData[field as keyof typeof formData])
+      .map(field => field);
 
     if (emptyFields.length > 0) {
       toast({
         title: "Incomplete form",
-        description: `Please fill in all fields: ${emptyFields.join(', ')}`,
+        description: `Please fill in all required fields: ${emptyFields.join(', ')}`,
         variant: "destructive",
       });
       return;
     }
 
-    navigate('/results', { state: formData });
+    try {
+      setLoading(true);
+      toast({
+        title: "Generating AI recommendations...",
+        description: "Please wait a few seconds...",
+      });
+
+      const prompt = useDetailedAnalysis 
+        ? `
+Based on the detailed soil analysis:
+- Season: ${formData.season}
+- Nitrogen (N): ${formData.nitrogen} mg/kg
+- Phosphorus (P): ${formData.phosphorus} mg/kg
+- Potassium (K): ${formData.potassium} mg/kg
+- pH: ${formData.ph}
+- Organic Matter: ${formData.organicMatter}%
+- Moisture: ${formData.moisture}%
+
+Suggest:
+1. Suitable crops based on soil nutrients
+2. Fertilizer recommendations (organic and/or inorganic)
+3. Dosage and application timing
+4. A sustainability tip for soil health
+Keep suggestions practical and based on the soil analysis data.
+        `
+        : `
+Based on the following inputs:
+- State: ${formData.state}
+- District: ${formData.district}
+- Block: ${formData.block}
+- Season: ${formData.season}
+- Soil Type: ${formData.soilType}
+
+Suggest:
+1. Suitable crops
+2. Fertilizer recommendations (organic and/or inorganic)
+3. Dosage and application timing
+4. A sustainability tip for the region
+Keep suggestions practical, farmer-friendly, and region-specific.
+        `;
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCmHEIo20QjzxCrRZOmBSBK_mEtw0TJT2w`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt
+                  }
+                ]
+              }
+            ]
+          })
+        }
+      );
+
+      const data = await res.json();
+      const geminiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!geminiText) {
+        throw new Error("No valid response from Gemini.");
+      }
+
+      toast({
+        title: "Success!",
+        description: "AI recommendations generated.",
+      });
+
+      navigate('/results', {
+        state: {
+          formData,
+          geminiResponse: geminiText
+        }
+      });
+
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Failed to generate AI recommendations.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -63,79 +175,79 @@ const SoilInput = () => {
 
                 <form onSubmit={handleSubmit}>
                   <div className="mb-6">
-                    <h3 className="text-lg font-medium text-gray-800 mb-4">LOCATION:</h3>
-
-                    <div className="mb-4">
-                      <label htmlFor="state" className="block text-gray-700 font-medium mb-1">STATE:</label>
-                      <input
-                        type="text"
-                        id="state"
-                        name="state"
-                        value={formData.state}
-                        onChange={handleInputChange}
-                        placeholder="Enter your state"
-                        className="w-full p-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-krishi-300 transition"
+                    <div className="flex items-center space-x-4 mb-6">
+                      <Switch
+                        id="analysis-mode"
+                        checked={useDetailedAnalysis}
+                        onCheckedChange={setUseDetailedAnalysis}
                       />
+                      <Label htmlFor="analysis-mode">
+                        I have detailed soil analysis report
+                      </Label>
                     </div>
 
-                    <div className="mb-4">
-                      <label htmlFor="district" className="block text-gray-700 font-medium mb-1">DISTRICT:</label>
-                      <input
-                        type="text"
-                        id="district"
-                        name="district"
-                        value={formData.district}
-                        onChange={handleInputChange}
-                        placeholder="Enter your district"
-                        className="w-full p-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-krishi-300 transition"
-                      />
-                    </div>
+                    {!useDetailedAnalysis && (
+                      <div>
+                        <h3 className="text-lg font-medium text-gray-800 mb-4">LOCATION:</h3>
+                        {["state", "district", "block", "season", "soilType"].map((field, idx) => (
+                          <div className="mb-4" key={idx}>
+                            <label htmlFor={field} className="block text-gray-700 font-medium mb-1">
+                              {field.toUpperCase()}:
+                            </label>
+                            <input
+                              type="text"
+                              id={field}
+                              name={field}
+                              value={formData[field as keyof typeof formData]}
+                              onChange={handleInputChange}
+                              placeholder={`Enter your ${field}`}
+                              className="w-full p-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-krishi-300 transition"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
-                    <div className="mb-4">
-                      <label htmlFor="block" className="block text-gray-700 font-medium mb-1">BLOCK:</label>
-                      <input
-                        type="text"
-                        id="block"
-                        name="block"
-                        value={formData.block}
-                        onChange={handleInputChange}
-                        placeholder="Enter your block"
-                        className="w-full p-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-krishi-300 transition"
-                      />
-                    </div>
-
-                    <div className="mb-4">
-                      <label htmlFor="season" className="block text-gray-700 font-medium mb-1">SEASON:</label>
-                      <input
-                        type="text"
-                        id="season"
-                        name="season"
-                        value={formData.season}
-                        onChange={handleInputChange}
-                        placeholder="Enter the season (e.g., Kharif, Rabi)"
-                        className="w-full p-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-krishi-300 transition"
-                      />
-                    </div>
-
-                    <div className="mb-8">
-                      <label htmlFor="soilType" className="block text-gray-700 font-medium mb-1">SOIL TYPE:</label>
-                      <input
-                        type="text"
-                        id="soilType"
-                        name="soilType"
-                        value={formData.soilType}
-                        onChange={handleInputChange}
-                        placeholder="Enter your soil type"
-                        className="w-full p-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-krishi-300 transition"
-                      />
-                    </div>
+                    {useDetailedAnalysis && (
+                      <div>
+                        <h3 className="text-lg font-medium text-gray-800 mb-4">SOIL ANALYSIS:</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          {[
+                            { name: 'nitrogen', label: 'Nitrogen (N)', unit: 'mg/kg' },
+                            { name: 'phosphorus', label: 'Phosphorus (P)', unit: 'mg/kg' },
+                            { name: 'potassium', label: 'Potassium (K)', unit: 'mg/kg' },
+                            { name: 'ph', label: 'pH', unit: '' },
+                            { name: 'organicMatter', label: 'Organic Matter', unit: '%' },
+                            { name: 'moisture', label: 'Moisture', unit: '%' },
+                            { name: 'season', label: 'Season', unit: '' }
+                          ].map((field, idx) => (
+                            <div className="mb-4" key={idx}>
+                              <label htmlFor={field.name} className="block text-gray-700 font-medium mb-1">
+                                {field.label}{field.unit && ` (${field.unit})`}:
+                              </label>
+                              <input
+                                type={field.name === 'season' ? 'text' : 'number'}
+                                step="0.01"
+                                id={field.name}
+                                name={field.name}
+                                value={formData[field.name as keyof typeof formData]}
+                                onChange={handleInputChange}
+                                placeholder={`Enter ${field.label.toLowerCase()}`}
+                                className="w-full p-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-krishi-300 transition"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <button
                     type="submit"
-                    className="krishi-btn w-full text-center uppercase"
+                    className={`krishi-btn w-full text-center uppercase ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={loading}
                   >
-                    GET RESULTS
+                    {loading ? 'Processing...' : 'GET RESULTS'}
                   </button>
                 </form>
               </div>

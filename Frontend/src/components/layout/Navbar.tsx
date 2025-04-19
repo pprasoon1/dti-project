@@ -44,7 +44,7 @@ const Navbar = () => {
           className="flex items-center space-x-2 text-krishi-700 font-bold"
         >
           <Leaf className="h-6 w-6 text-krishi-500" strokeWidth={2.5} />
-          <span className="text-xl">KrishiMitra</span>
+          <span className="text-xl">CropWise</span>
         </Link>
 
         {/* Desktop Navigation */}

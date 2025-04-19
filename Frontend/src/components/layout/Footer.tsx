@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <Leaf className="h-6 w-6 text-krishi-500" strokeWidth={2.5} />
-              <span className="text-xl font-bold text-gray-800">KrishiMitra</span>
+              <span className="text-xl font-bold text-gray-800">CropWise</span>
             </div>
             <p className="text-gray-600 text-sm">
               Empowering farmers with AI-driven crop and fertilizer recommendations
@@ -87,7 +87,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center space-x-3">
                 <Mail size={18} className="text-krishi-500 flex-shrink-0" />
-                <a href="mailto:info@krishimitra.org" className="text-gray-600 hover:text-krishi-500 text-sm">info@krishimitra.org</a>
+                <a href="mailto:info@CropWise.org" className="text-gray-600 hover:text-krishi-500 text-sm">info@CropWise.org</a>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone size={18} className="text-krishi-500 flex-shrink-0" />
@@ -99,7 +99,7 @@ const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-gray-200">
           <p className="text-center text-gray-500 text-sm">
-            © {new Date().getFullYear()} KrishiMitra. All rights reserved.
+            © {new Date().getFullYear()} CropWise. All rights reserved.
           </p>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Leaf, ChevronDown } from 'lucide-react';
+import { Sprout, ChevronDown } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import PageTransition from '@/components/layout/PageTransition';
@@ -165,7 +165,7 @@ Keep suggestions practical, farmer-friendly, and region-specific.
               <div className="bg-soil-100/80 rounded-2xl shadow-md p-8 animate-fade-up">
                 <div className="mb-8">
                   <h2 className="text-2xl font-bold text-gray-800 flex items-center">
-                    <Leaf className="mr-2 text-krishi-500" />
+                    <Sprout className="mr-2 text-krishi-500" />
                     Soil Analysis Form
                   </h2>
                   <p className="text-gray-600 mt-2">

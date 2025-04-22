@@ -15,6 +15,8 @@ import NotFound from "./pages/NotFound";
 import Visualization from '@/pages/Visualization';
 import CropLibrary from '@/pages/CropLibrary';
 import FarmerResources from '@/pages/FarmerResources';
+import Test from "./pages/Test";
+import AboutPage from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/soil-input" element={<SoilInput />} />
+           <Route path="/about" element= {<AboutPage />} />
             <Route path="/results" element={<Results />} />
             <Route path="/visualization" element={<Visualization />} />
             <Route path="/crop-library" element={<CropLibrary />} />

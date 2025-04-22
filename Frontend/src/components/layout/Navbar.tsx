@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Leaf, Menu, X } from 'lucide-react';
+import { Sprout, Menu, X } from 'lucide-react';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,7 +43,7 @@ const Navbar = () => {
           to="/" 
           className="flex items-center space-x-2 text-krishi-700 font-bold"
         >
-          <Leaf className="h-6 w-6 text-krishi-500" strokeWidth={2.5} />
+          <Sprout className="h-6 w-6 text-krishi-500" strokeWidth={2.5} />
           <span className="text-xl">CropWise</span>
         </Link>
 

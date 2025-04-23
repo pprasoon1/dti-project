@@ -16,33 +16,15 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch weather data from RapidAPI using dynamic geolocation
+  // Fetch weather data for Greater Noida, India on mount
   useEffect(() => {
-    // Get user's geolocation
-    const getLocationAndFetchWeather = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(async (position) => {
-          const { latitude, longitude } = position.coords;
-          // Fetch weather data using the dynamic coordinates
-          fetchWeatherData(latitude, longitude);
-        }, (err) => {
-          setError("Failed to retrieve location.");
-          setLoading(false);
-        });
-      } else {
-        setError("Geolocation is not supported by this browser.");
-        setLoading(false);
-      }
-    };
-
-    // Fetch weather data with given latitude and longitude
-    const fetchWeatherData = async (latitude, longitude) => {
+    const fetchWeatherData = async () => {
       try {
         const response = await axios.get(
-          `https://open-weather13.p.rapidapi.com/city/latlon/${latitude}/${longitude}/EN`, 
+          "https://open-weather13.p.rapidapi.com/city/greater%20noida/EN",
           {
             headers: {
-              "x-rapidapi-key": "5c22d9bf8amshcffd37a10bbbb7ap16b95cjsnc6221d431aa5", // Use your own RapidAPI key here
+              "x-rapidapi-key": "5c22d9bf8amshcffd37a10bbbb7ap16b95cjsnc6221d431aa5", // Replace with your own key in production
               "x-rapidapi-host": "open-weather13.p.rapidapi.com",
             },
           }
@@ -55,7 +37,7 @@ const HomePage = () => {
       }
     };
 
-    getLocationAndFetchWeather();
+    fetchWeatherData();
   }, []);
 
   if (loading) {
@@ -78,7 +60,7 @@ const HomePage = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      {/* Hero Section with Parallax */}
+      {/* Hero Section */}
       <div className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -104,7 +86,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Weather Integration Section */}
+      {/* Weather Section */}
       <div className="bg-white py-24 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -116,7 +98,6 @@ const HomePage = () => {
             </p>
           </div>
 
-          {/* Weather Information */}
           <div className="flex justify-center items-center space-x-8">
             <div className="bg-green-50 p-8 rounded-2xl shadow-lg w-64">
               <div className="flex items-center space-x-4">
@@ -134,7 +115,9 @@ const HomePage = () => {
               </div>
               <div className="mt-4 flex items-center">
                 <Thermometer className="w-6 h-6 text-red-500" />
-                <p className="ml-2 text-gray-600">Feels Like: {Math.round(weather.main.feels_like - 273.15)}°C</p>
+                <p className="ml-2 text-gray-600">
+                  Feels Like: {Math.round(weather.main.feels_like - 273.15)}°C
+                </p>
               </div>
             </div>
 
@@ -159,7 +142,6 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Footer */}
       <Footer />
     </div>
   );
